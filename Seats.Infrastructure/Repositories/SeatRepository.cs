@@ -39,6 +39,14 @@ namespace Seats.Infrastructure.Repositories
             return await _db.Seat.AsNoTracking().ToListAsync();
         }
 
+        public async Task<List<Seat>> GetByZoneAsync(ZoneId zoneId)
+        {
+            return await _db.Seat
+                .AsNoTracking()
+                .Where(s => s.ZoneId.Value == zoneId.Value)
+                .ToListAsync();
+        }
+
         public async Task<Seat?> UpdateAsync(Seat seat, CancellationToken cancellationToken)
         {
             _db.Seat.Update(seat);

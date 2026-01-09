@@ -34,11 +34,11 @@ namespace Seats.Infrastructure.Database.Context
         {
             var entries = ChangeTracker
                 .Entries()
-                .Where(e => e.Entity is Seats.Domain.Primitives.AggregateRoot && (e.State == EntityState.Added || e.State == EntityState.Modified));
+                .Where(e => e.Entity is AggregateRoot && (e.State == EntityState.Added || e.State == EntityState.Modified));
 
             foreach (var entityEntry in entries)
             {
-                var entity = (Seats.Domain.Primitives.AggregateRoot)entityEntry.Entity;
+                var entity = (AggregateRoot)entityEntry.Entity;
 
                 if (entityEntry.State == EntityState.Added)
                 {
