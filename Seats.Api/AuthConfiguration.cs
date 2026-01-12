@@ -33,13 +33,10 @@ namespace Seats.Api
                     {
                         OnMessageReceived = context =>
                         {
-                            var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Replace("Bearer ", "").Trim();
-                            if(!string.IsNullOrEmpty(token)) Console.WriteLine($"Autorizado: {token}");
-                            return Task.CompletedTask;
+                            var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Replace("Bearer ", "").Trim();                            return Task.CompletedTask;
                         },
                         OnAuthenticationFailed = context =>
                         {
-                            Console.WriteLine($"Error de autenticación: {context.Exception}");
                             return Task.CompletedTask;
                         }
                     };

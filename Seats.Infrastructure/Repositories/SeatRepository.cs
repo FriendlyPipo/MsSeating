@@ -27,11 +27,9 @@ namespace Seats.Infrastructure.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async Task<Seat?> GetByIdAsync(SeatId id)
+        public async Task<Seat?> GetByIdAsync(SeatId seatId, EventId eventId, FunctionId functionId, ZoneId zoneId, VenueId venueId)
         {
-            return await _db.Seat
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.SeatId.Value == id.Value);
+            return await _db.Seat.FindAsync(seatId, eventId, functionId, zoneId, venueId);
         }
 
         public async Task<List<Seat>> GetAllAsync()
@@ -39,11 +37,26 @@ namespace Seats.Infrastructure.Repositories
             return await _db.Seat.AsNoTracking().ToListAsync();
         }
 
-        public async Task<List<Seat>> GetByZoneAsync(ZoneId zoneId)
+        public async Task<List<Seat>> GetSeatByZoneAsync(ZoneId zoneId, EventId eventId, FunctionId functionId, VenueId venueId)
         {
             return await _db.Seat
                 .AsNoTracking()
-                .Where(s => s.ZoneId.Value == zoneId.Value)
+                .Where(s => s.ZoneId.Equals(zoneId) &&
+                            s.EventId.Equals(eventId) &&
+                            s.FunctionId.Equals(functionId) &&
+                            s.VenueId.Equals(venueId))
+                .ToListAsync();
+        }
+
+        public async Task<List<Seat>> GetSpecificSeatsAsync(EventId eventId, FunctionId functionId, ZoneId zoneId, VenueId venueId, SeatRow row)
+        {
+            return await _db.Seat
+                .AsNoTracking()
+                .Where(s => s.EventId.Equals(eventId) &&
+                            s.FunctionId.Equals(functionId) &&
+                            s.ZoneId.Equals(zoneId) &&
+                            s.VenueId.Equals(venueId) &&
+                            s.Row.Equals(row))
                 .ToListAsync();
         }
 
@@ -56,7 +69,7 @@ namespace Seats.Infrastructure.Repositories
 
         public async Task DeleteAsync(SeatId id)
         {
-            var entity = await _db.Seat.FindAsync(id); 
+            var entity = await _db.Seat.FirstOrDefaultAsync(s => s.SeatId.Equals(id)); 
             if (entity != null)
             {
                  _db.Seat.Remove(entity);
@@ -66,9 +79,8 @@ namespace Seats.Infrastructure.Repositories
 
         public async Task DeleteMultipleSeatsAsync(IEnumerable<SeatId> ids)
         {
-            var idValues = ids.Select(x => x.Value).ToList();
             var seats = await _db.Seat
-                .Where(s => idValues.Contains(s.SeatId.Value))
+                .Where(s => ids.Contains(s.SeatId))
                 .ToListAsync();
 
             if (seats.Any())

@@ -1,14 +1,15 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Seats.Infrastructure.Exceptions
 {
-    [ExcludeFromCodeCoverage]
-    public class RabbitMQException : InfrastructureExceptionBase
+    public class RabbitMQException : Exception
     {
-        public RabbitMQException(string message)
-            : base(message) { }
-            
-        public RabbitMQException(string message, Exception innerException)
-            : base(message, innerException) { }
+        public RabbitMQException(string message) 
+            : base(message)
+        {
+        }
+
+        public RabbitMQException(string message, Exception innerException) 
+            : base(message, innerException)
+        {
+        }
     }
 }

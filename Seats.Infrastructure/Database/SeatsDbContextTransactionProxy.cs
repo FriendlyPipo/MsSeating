@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Seats.Core.Database;
 using System.Diagnostics.CodeAnalysis;
+using Seats.Infrastructure.Database.Context;
 
 namespace Seats.Infrastructure.Database
 {
@@ -11,7 +12,7 @@ namespace Seats.Infrastructure.Database
         private readonly IDbContextTransaction _transaction;
         private bool _disposed;
 
-        public SeatsDbContextTransactionProxy(DbContext context)
+        public SeatsDbContextTransactionProxy(SeatsDbContext context)
         {
             _transaction = context.Database.BeginTransaction();
         }

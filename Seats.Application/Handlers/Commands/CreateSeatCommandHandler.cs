@@ -1,35 +1,45 @@
+using FluentValidation;
 using MediatR;
 using Seats.Application.Commands;
-using Seats.Core.Repositories;
-using Seats.Domain.Entities;
+using Seats.Core.RabbitMQ;
 using Seats.Domain.ValueObjects;
+using Seats.Application.Dtos;
 
 namespace Seats.Application.Handlers.Commands
 {
     public class CreateSeatCommandHandler : IRequestHandler<CreateSeatCommand, Guid>
     {
-        private readonly ISeatRepository _repository;
+        private readonly IEventBus<CreateSeatDto> _eventBus;
+        private readonly IValidator<CreateSeatCommand> _validator;
 
-        public CreateSeatCommandHandler(ISeatRepository repository)
+        public CreateSeatCommandHandler(IEventBus<CreateSeatDto> eventBus, IValidator<CreateSeatCommand> validator)
         {
-            _repository = repository;
+            _eventBus = eventBus;
+            _validator = validator;
         }
 
         public async Task<Guid> Handle(CreateSeatCommand request, CancellationToken cancellationToken)
         {
-            var seatId = SeatId.New();
-            
-            var seat = new Seat(
-                seatId,
-                EventId.Create(request.Seat.EventId),
-                FunctionId.Create(request.Seat.FunctionId),
-                ZoneId.Create(request.Seat.ZoneId),
-                VenueId.Create(request.Seat.VenueId),
-                SeatRow.Create(request.Seat.Row),
-                SeatNumber.Create(request.Seat.Number)
-            );
+            var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
 
-            await _repository.AddAsync(seat);
+            var seatId = SeatId.New();
+
+            var createSeatMessage = new CreateSeatDto
+            {
+                SeatId = seatId.Value,
+                EventId = request.Seat.EventId,
+                FunctionId = request.Seat.FunctionId,
+                ZoneId = request.Seat.ZoneId,
+                VenueId = request.Seat.VenueId,
+                Row = request.Seat.Row,
+                Number = request.Seat.Number
+            };
+
+            await _eventBus.PublishMessageAsync(createSeatMessage, "seats_queue", "CreateSeat");
 
             return seatId.Value;
         }

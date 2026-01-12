@@ -10,10 +10,16 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.OAuthClientId(builder.Configuration["Keycloak:ClientId"]);
+        c.OAuthClientSecret(builder.Configuration["Keycloak:ClientSecret"]);
+        c.OAuthRealm(builder.Configuration["Keycloak:Realm"]);
+        c.OAuthAppName("Seats API");
+    });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 

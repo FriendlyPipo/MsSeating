@@ -41,11 +41,14 @@ namespace Seats.Api
             var connectionString = configuration.GetConnectionString("PostgresSQLConnection");
             if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new ConfigurationException("La cadena de conexión 'PostgresSQLConnection' no está configurada.");
+                throw new ConfigurationException("LEl parametro de conexion esta vacio");
             }
 
-            services.AddDbContext<SeatsDbContext>(options =>
+            services.AddDbContextFactory<SeatsDbContext>(options =>
                 options.UseNpgsql(connectionString));
+
+            services.AddScoped<SeatsDbContext>(provider => 
+                provider.GetRequiredService<IDbContextFactory<SeatsDbContext>>().CreateDbContext());
 
             services.AddScoped<ISeatsDbContext>(provider => provider.GetRequiredService<SeatsDbContext>());
             services.AddScoped<ISeatsDbContextTransactionProxy, SeatsDbContextTransactionProxy>();
@@ -82,12 +85,19 @@ namespace Seats.Api
             // Producer
             services.AddScoped(typeof(IEventBus<>), typeof(RabbitMQProducer<>));
 
-            // Consumer
-            services.AddSingleton<IRabbitMQConsumer, RabbitMQConsumer>();
+            // Consumers
+            services.AddSingleton<CreateSeatConsumer>();
+            services.AddSingleton<DeleteSeatConsumer>();
+            services.AddSingleton<UpdateSeatStatusConsumer>();
+
+            services.AddSingleton<IRabbitMQConsumer>(sp => new CompositeRabbitMQConsumer(new IRabbitMQConsumer[]
+            {
+                sp.GetRequiredService<CreateSeatConsumer>(),
+                sp.GetRequiredService<DeleteSeatConsumer>(),
+                sp.GetRequiredService<UpdateSeatStatusConsumer>()
+            }));
+
             services.AddHostedService<RabbitMQBackgroundService>();
-            
-            services.AddDbContextFactory<SeatsDbContext>(options =>
-                options.UseNpgsql(connectionString));
 
             return services;
         }

@@ -22,7 +22,7 @@ namespace Seats.Api
                     {
                         Implicit = new OpenApiOAuthFlow
                         {
-                            AuthorizationUrl = new Uri(configuration["Keycloak:AuthorizationUrl"] ?? "http://localhost:8080"),     
+                            AuthorizationUrl = new Uri($"{configuration["Keycloak:BaseUrl"]}/realms/{configuration["Keycloak:Realm"]}/protocol/openid-connect/auth"),     
                             Scopes = new Dictionary<string, string>{
                                 {"openid", "openid"},
                                 {"profile", "profile"}

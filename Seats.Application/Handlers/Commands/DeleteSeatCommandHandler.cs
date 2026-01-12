@@ -1,25 +1,31 @@
+using FluentValidation;
 using MediatR;
-using Seats.Application.Exceptions;
 using Seats.Application.Commands;
-using Seats.Core.Repositories;
-using Seats.Domain.ValueObjects;
+using Seats.Core.RabbitMQ;
+using Seats.Application.Dtos;
 
 namespace Seats.Application.Handlers.Commands
 {
     public class DeleteSeatCommandHandler : IRequestHandler<DeleteSeatCommand>
     {
-        private readonly ISeatRepository _repository;
+        private readonly IEventBus<DeleteSeatDto> _eventBus;
+        private readonly IValidator<DeleteSeatCommand> _validator;
 
-        public DeleteSeatCommandHandler(ISeatRepository repository)
+        public DeleteSeatCommandHandler(IEventBus<DeleteSeatDto> eventBus, IValidator<DeleteSeatCommand> validator)
         {
-            _repository = repository;
+            _eventBus = eventBus;
+            _validator = validator;
         }
 
         public async Task Handle(DeleteSeatCommand request, CancellationToken cancellationToken)
         {
-            var seatId = SeatId.Create(request.DeleteDto.SeatId);
-            
-            await _repository.DeleteAsync(seatId);
+            var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+
+            await _eventBus.PublishMessageAsync(request.DeleteDto, "seats_queue", "DeleteSeat");
         }
     }
 }

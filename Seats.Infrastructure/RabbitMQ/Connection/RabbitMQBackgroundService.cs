@@ -17,12 +17,12 @@ namespace Seats.Infrastructure.RabbitMQ.Connection
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation(" Esperando la inicialización de RabbitMQ...");
+            _logger.LogInformation(" Esperando la inicialización de Rabbit");
 
             await Task.Delay(3000, stoppingToken); 
-            await _rabbitMQConsumer.ConsumeMessagesAsync("seatsQueue");
+            await _rabbitMQConsumer.ConsumeMessagesAsync("seats_queue");
 
-            _logger.LogInformation(" Consumidor de RabbitMQ iniciado.");
+            _logger.LogInformation(" Consumidor de Rabbit iniciado.");
         }
     }
 }

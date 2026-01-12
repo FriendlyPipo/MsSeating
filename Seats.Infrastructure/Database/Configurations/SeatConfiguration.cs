@@ -11,7 +11,7 @@ namespace Seats.Infrastructure.Database.Configurations
         {
             builder.ToTable("seats");
 
-            builder.HasKey(s => s.SeatId);
+            builder.HasKey(s => new { s.SeatId, s.EventId, s.FunctionId, s.ZoneId, s.VenueId });
 
             builder.Property(s => s.SeatId)
                 .HasConversion(id => id.Value, value => SeatId.Create(value))
@@ -39,7 +39,6 @@ namespace Seats.Infrastructure.Database.Configurations
 
             builder.Property(s => s.Row)
                 .HasConversion(row => row.Value, value => SeatRow.Create(value))
-                .HasMaxLength(10)
                 .IsRequired();
 
             builder.Property(s => s.Number)

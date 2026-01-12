@@ -18,7 +18,11 @@ namespace Seats.Application.Handlers.Queries
         public async Task<List<Seat>> Handle(GetSeatsByZoneQuery request, CancellationToken cancellationToken)
         {
             var zoneId = ZoneId.Create(request.ZoneId);
-            return await _repository.GetByZoneAsync(zoneId);
+            var eventId = EventId.Create(request.EventId);
+            var functionId = FunctionId.Create(request.FunctionId);
+            var venueId = VenueId.Create(request.VenueId);
+
+            return await _repository.GetSeatByZoneAsync(zoneId, eventId, functionId, venueId);
         }
     }
 }

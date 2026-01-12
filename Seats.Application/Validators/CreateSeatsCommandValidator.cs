@@ -7,17 +7,12 @@ namespace Seats.Application.Validators
     {
         public CreateSeatsCommandValidator()
         {
-            RuleFor(x => x.SeatsDto).NotNull().WithMessage("List of seats is required.");
-            RuleFor(x => x.SeatsDto.Seats).NotEmpty().WithMessage("At least one seat is required.");
-            RuleForEach(x => x.SeatsDto.Seats).ChildRules(seat =>
-            {
-                seat.RuleFor(x => x.EventId).NotEmpty().WithMessage("EventId is required.");
-                seat.RuleFor(x => x.FunctionId).NotEmpty().WithMessage("FunctionId is required.");
-                seat.RuleFor(x => x.ZoneId).NotEmpty().WithMessage("ZoneId is required.");
-                seat.RuleFor(x => x.VenueId).NotEmpty().WithMessage("VenueId is required.");
-                seat.RuleFor(x => x.Row).NotEmpty().WithMessage("Row is required.");
-                seat.RuleFor(x => x.Number).GreaterThan(0).WithMessage("Number must be greater than 0.");
-            });
+            RuleFor(x => x.SeatsDto.Quantity).GreaterThan(0).WithMessage("Por favor, ingrese una cantidad válida de asientos a crear.");
+            RuleFor(x => x.SeatsDto.EventId).NotEmpty().WithMessage("Por favor, ingrese un EventId válido.");
+            RuleFor(x => x.SeatsDto.FunctionId).NotEmpty().WithMessage("Por favor, ingrese un FunctionId válido.");
+            RuleFor(x => x.SeatsDto.ZoneId).NotEmpty().WithMessage("Por favor, ingrese un ZoneId válido.");
+            RuleFor(x => x.SeatsDto.VenueId).NotEmpty().WithMessage("Por favor, ingrese un VenueId válido.");
+            RuleFor(x => x.SeatsDto.Row).GreaterThanOrEqualTo(0).WithMessage("Por favor, ingrese un numero de fila válido.");
         }
     }
 }

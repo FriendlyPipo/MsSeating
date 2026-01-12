@@ -1,11 +1,10 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Seats.Infrastructure.Exceptions
 {
-    [ExcludeFromCodeCoverage]
-    public class ConfigurationException : InfrastructureExceptionBase
+    public class ConfigurationException : Exception
     {
         public ConfigurationException(string message)
-            : base(message) { }
+            : base(message)
+        {
+        }
     }
 }

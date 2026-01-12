@@ -1,4 +1,4 @@
-namespace Seats.Application.Exceptions
+namespace Seats.Infrastructure.Exceptions
 {
     public class SeatNotFoundException : Exception
     {

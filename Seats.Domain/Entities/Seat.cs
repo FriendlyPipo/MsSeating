@@ -31,6 +31,10 @@ namespace Seats.Domain.Entities
 
         public void ChangeStatus(SeatStatus newStatus)
         {
+            if (Status == SeatStatus.Disponible && newStatus == SeatStatus.Vendido)
+            {
+                throw new InvalidOperationException("El estado de un asiento no puede pasar de disponible a vendido");
+            }
             Status = newStatus;
         }
 
