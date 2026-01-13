@@ -1,5 +1,5 @@
 using MediatR;
-using Seats.Application.Dtos;
+using Seats.Core.Dtos;
 
 namespace Seats.Application.Commands
 {

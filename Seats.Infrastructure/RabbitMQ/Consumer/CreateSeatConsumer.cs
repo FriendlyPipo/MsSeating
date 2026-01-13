@@ -7,7 +7,7 @@ using RabbitMQ.Client.Events;
 using Seats.Core.RabbitMQ;
 using Seats.Domain.Entities;
 using Seats.Infrastructure.Database.Context;
-using Seats.Infrastructure.Exceptions;
+using Seats.Core.Exceptions;
 
 namespace Seats.Infrastructure.RabbitMQ.Consumer
 {
@@ -78,14 +78,13 @@ namespace Seats.Infrastructure.RabbitMQ.Consumer
                 FunctionId.Create(createSeatEvent.FunctionId),
                 ZoneId.Create(createSeatEvent.ZoneId),
                 VenueId.Create(createSeatEvent.VenueId),
-                SeatRow.Create(createSeatEvent.Row),
                 SeatNumber.Create(createSeatEvent.Number)
             );
 
             await context.Seat.AddAsync(seat);
             await context.SaveChangesAsync();
 
-            _logger.LogInformation($"Asiento creado exitosamente ID:{seat.SeatId}, Fila:{seat.Row}, Numero:{seat.Number}");
+            _logger.LogInformation($"Asiento creado exitosamente ID:{seat.SeatId}, Numero:{seat.Number}");
         }
 
         private sealed class SeatMessageDto
@@ -95,7 +94,6 @@ namespace Seats.Infrastructure.RabbitMQ.Consumer
             public Guid FunctionId { get; set; }
             public Guid ZoneId { get; set; }
             public Guid VenueId { get; set; }
-            public int Row { get; set; }
             public int Number { get; set; }
         }
     }

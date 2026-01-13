@@ -1,4 +1,4 @@
-namespace Seats.Application.Dtos
+namespace Seats.Core.Dtos
 {
     public record UpdateSeatStatusDto
     {

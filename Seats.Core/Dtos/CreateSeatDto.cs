@@ -1,4 +1,4 @@
-namespace Seats.Application.Dtos
+namespace Seats.Core.Dtos
 {
     public record CreateSeatDto
     {
@@ -7,7 +7,7 @@ namespace Seats.Application.Dtos
         public Guid FunctionId { get; init; }
         public Guid ZoneId { get; init; }
         public Guid VenueId { get; init; }
-        public int Row { get; init; }
         public int Number { get; init; }
+        public Guid? UserId { get; init; }
     }
 }

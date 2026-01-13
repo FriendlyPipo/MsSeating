@@ -51,9 +51,6 @@ namespace Seats.Infrastructure.Migrations
                     b.Property<int>("Number")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Row")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");

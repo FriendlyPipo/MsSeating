@@ -3,11 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace Seats.Domain.ValueObjects
 {
     [ExcludeFromCodeCoverage]
-    public sealed class VenueId
+    public readonly struct VenueId
     {
+        public Guid Value { get; }
         private VenueId(Guid value) => Value = value;
-
-        public Guid Value { get; init; }
 
         public static VenueId Create(Guid value)
         {

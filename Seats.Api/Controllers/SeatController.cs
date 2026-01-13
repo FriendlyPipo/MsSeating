@@ -4,7 +4,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Seats.Application.Commands;
 using Seats.Application.Queries;
-using Seats.Application.Dtos;
+using Seats.Core.Dtos;
+using System.Security.Claims;
 
 namespace Seats.Api.Controllers
 {
@@ -21,13 +22,23 @@ namespace Seats.Api.Controllers
             _logger = logger;
         }
 
+        private Guid? GetUserId()
+        {
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (Guid.TryParse(userIdString, out var userId))
+            {
+                return userId;
+            }
+            return null;
+        }
+
         [HttpPost("CreateSeat")]
         [Authorize]
         public async Task<IActionResult> CreateSeat([FromBody] CreateSeatDto createSeatDto)
         {
             try
             {
-                var command = new CreateSeatCommand(createSeatDto);
+                var command = new CreateSeatCommand(createSeatDto with { UserId = GetUserId() });
                 var seatId = await _mediator.Send(command);
                 _logger.LogInformation("Asiento creado exitosamente con ID: {SeatId}", seatId);
                 return Ok(new { SeatId = seatId, Message = "Asiento creado exitosamente." });
@@ -45,7 +56,7 @@ namespace Seats.Api.Controllers
         {
             try
             {
-                var command = new CreateSeatsCommand(createSeatsDto);
+                var command = new CreateSeatsCommand(createSeatsDto with { UserId = GetUserId() });
                 await _mediator.Send(command);
                 _logger.LogInformation("Lote de asientos creado exitosamente.");
                 return Ok(new { Message = "Lote de asientos creado exitosamente." });
@@ -63,7 +74,7 @@ namespace Seats.Api.Controllers
         {
             try
             {
-                var command = new DeleteSeatCommand(deleteSeatDto);
+                var command = new DeleteSeatCommand(deleteSeatDto with { UserId = GetUserId() });
                 await _mediator.Send(command);
                 _logger.LogInformation("Asiento eliminado exitosamente.");
                 return Ok(new { Message = "Asiento eliminado exitosamente." });
@@ -81,7 +92,7 @@ namespace Seats.Api.Controllers
         {
             try
             {
-                var command = new DeleteSeatsCommand(deleteSeatsDto);
+                var command = new DeleteSeatsCommand(deleteSeatsDto with { UserId = GetUserId() });
                 await _mediator.Send(command);
                 _logger.LogInformation("Lote de asientos eliminado exitosamente.");
                 return Ok(new { Message = "Lote de asientos eliminado exitosamente." });

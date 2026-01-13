@@ -8,7 +8,9 @@ using Seats.Core.RabbitMQ;
 using Seats.Domain.Entities;
 using Seats.Domain.ValueObjects;
 using Seats.Infrastructure.Database.Context;
-using Seats.Infrastructure.Exceptions;
+using Seats.Core.Exceptions;
+using Seats.Core.Services;
+using Seats.Core.Dtos;
 
 namespace Seats.Infrastructure.RabbitMQ.Consumer
 {
@@ -17,15 +19,18 @@ namespace Seats.Infrastructure.RabbitMQ.Consumer
         private readonly IConnectionRabbitMQ _rabbitMQConnection;
         private readonly IDbContextFactory<SeatsDbContext> _dbContextFactory;
         private readonly ILogger<UpdateSeatStatusConsumer> _logger;
+        private readonly IUserLogService _userLogService;
 
         public UpdateSeatStatusConsumer(
             IConnectionRabbitMQ rabbitMQConnection,
             IDbContextFactory<SeatsDbContext> dbContextFactory,
-            ILogger<UpdateSeatStatusConsumer> logger)
+            ILogger<UpdateSeatStatusConsumer> logger,
+            IUserLogService userLogService)
         {
             _rabbitMQConnection = rabbitMQConnection;
             _dbContextFactory = dbContextFactory;
             _logger = logger;
+            _userLogService = userLogService;
         }
 
         public async Task ConsumeMessagesAsync(string queueName)
@@ -98,6 +103,16 @@ namespace Seats.Infrastructure.RabbitMQ.Consumer
                     context.Seat.Update(seat);
                     await context.SaveChangesAsync();
                     _logger.LogInformation($"Estado de asiento actualizado a{status}");
+
+                    if (status != SeatStatus.Disponible)
+                    {
+                        await _userLogService.LogAsync(new UserLogDto
+                         {
+                            UserId = updateSeatEvent.UserId,
+                            Title = $"Asiento {status}",
+                            Description = $"Asiento {seatId.Value} {status} por el usuario {updateSeatEvent.UserId}"
+                        });
+                    }
                 }
             }
             else

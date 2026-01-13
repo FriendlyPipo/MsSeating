@@ -7,11 +7,14 @@ using Seats.Core.RabbitMQ;
 using Seats.Core.Repositories;
 using Seats.Infrastructure.Database;
 using Seats.Infrastructure.Database.Context;
-using Seats.Infrastructure.Exceptions;
+using Seats.Core.Exceptions;
 using Seats.Infrastructure.RabbitMQ.Connection;
 using Seats.Infrastructure.RabbitMQ.Consumer;
 using Seats.Infrastructure.RabbitMQ.Producer;
 using Seats.Infrastructure.Repositories;
+
+using Seats.Core.Services;
+using Seats.Infrastructure.Services;
 
 namespace Seats.Api
 {
@@ -35,6 +38,12 @@ namespace Seats.Api
                         .AllowAnyHeader();
                 });
             });
+
+            services.AddHttpClient<ITokenService, TokenService>();
+
+            services.AddHttpClient<IUserLogService, UserLogService>();
+            services.AddHttpClient<IUserAuditService, UserAuditService>();
+            services.AddHttpClient<IEventService, EventService>();
 
             services.AddApplication();
 
@@ -61,7 +70,7 @@ namespace Seats.Api
             {
                 var rabbitMqSection = configuration.GetSection("RabbitMQ");
                 var hostName = rabbitMqSection["HostName"];
-                var port = int.TryParse(rabbitMqSection["Port"], out var p) ? p : 5672;
+                var port = int.TryParse(rabbitMqSection["Port"], out var p) ? p : 15672;
                 var userName = rabbitMqSection["UserName"];
                 var password = rabbitMqSection["Password"];
 

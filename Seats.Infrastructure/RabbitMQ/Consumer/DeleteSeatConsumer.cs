@@ -8,7 +8,7 @@ using Seats.Core.RabbitMQ;
 using Seats.Domain.Entities;
 using Seats.Domain.ValueObjects;
 using Seats.Infrastructure.Database.Context;
-using Seats.Infrastructure.Exceptions;
+using Seats.Core.Exceptions;
 
 namespace Seats.Infrastructure.RabbitMQ.Consumer
 {

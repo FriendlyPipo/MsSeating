@@ -13,18 +13,16 @@ namespace Seats.Domain.Entities
         public UserId? UserId { get; private set; }
         public SeatStatus Status { get; private set; }
         public SeatNumber Number { get; private set; }
-        public SeatRow Row { get; private set; }
 
         protected Seat() { }
 
-        public Seat(SeatId id, EventId eventId, FunctionId functionId, ZoneId zoneId, VenueId venueId, SeatRow row, SeatNumber number)
+        public Seat(SeatId id, EventId eventId, FunctionId functionId, ZoneId zoneId, VenueId venueId, SeatNumber number)
         {
             SeatId = id;
             EventId = eventId;
             FunctionId = functionId;
             ZoneId = zoneId;
             VenueId = venueId;
-            Row = row;
             Number = number;
             Status = SeatStatus.Disponible;
         }

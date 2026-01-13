@@ -1,10 +1,10 @@
 using FluentValidation;
 using MediatR;
-using Seats.Infrastructure.Exceptions;
+using Seats.Core.Exceptions;
 using Seats.Application.Commands;
 using Seats.Core.RabbitMQ;
 using Seats.Domain.Entities;
-using Seats.Application.Dtos;
+using Seats.Core.Dtos;
 using Seats.Core.Repositories;
 using Seats.Domain.ValueObjects;
 

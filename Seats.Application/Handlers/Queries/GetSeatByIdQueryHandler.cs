@@ -1,5 +1,5 @@
 using MediatR;
-using Seats.Application.Dtos;
+using Seats.Core.Dtos;
 using Seats.Application.Queries;
 using Seats.Core.Repositories;
 using Seats.Domain.Entities;

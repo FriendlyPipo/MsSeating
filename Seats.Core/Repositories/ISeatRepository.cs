@@ -9,7 +9,8 @@ namespace Seats.Core.Repositories
         Task<Seat?> GetByIdAsync(SeatId seatId, EventId eventId, FunctionId functionId, ZoneId zoneId, VenueId venueId);
         Task<List<Seat>> GetAllAsync();
         Task<List<Seat>> GetSeatByZoneAsync(ZoneId zoneId, EventId eventId, FunctionId functionId, VenueId venueId);
-        Task<List<Seat>> GetSpecificSeatsAsync(EventId eventId, FunctionId functionId, ZoneId zoneId, VenueId venueId, SeatRow row);
+        Task<int> GetSeatCountByZoneAsync(ZoneId zoneId, EventId eventId, FunctionId functionId, VenueId venueId);
+        Task<int> GetLastSeatNumberAsync(EventId eventId, FunctionId functionId, ZoneId zoneId, VenueId venueId);
         Task DeleteAsync(SeatId id);
         Task DeleteMultipleSeatsAsync(IEnumerable<SeatId> ids);
         Task AddMultipleSeatsAsync(IEnumerable<Seat> seats);

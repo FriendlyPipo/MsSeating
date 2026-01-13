@@ -48,16 +48,28 @@ namespace Seats.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Seat>> GetSpecificSeatsAsync(EventId eventId, FunctionId functionId, ZoneId zoneId, VenueId venueId, SeatRow row)
+        public async Task<int> GetSeatCountByZoneAsync(ZoneId zoneId, EventId eventId, FunctionId functionId, VenueId venueId)
         {
             return await _db.Seat
+                 .AsNoTracking()
+                 .CountAsync(s => s.ZoneId.Equals(zoneId) &&
+                             s.EventId.Equals(eventId) &&
+                             s.FunctionId.Equals(functionId) &&
+                             s.VenueId.Equals(venueId));
+        }
+
+        public async Task<int> GetLastSeatNumberAsync(EventId eventId, FunctionId functionId, ZoneId zoneId, VenueId venueId)
+        {
+            var seats = await _db.Seat
                 .AsNoTracking()
                 .Where(s => s.EventId.Equals(eventId) &&
                             s.FunctionId.Equals(functionId) &&
                             s.ZoneId.Equals(zoneId) &&
-                            s.VenueId.Equals(venueId) &&
-                            s.Row.Equals(row))
+                            s.VenueId.Equals(venueId))
+                .Select(s => s.Number)
                 .ToListAsync();
+
+            return seats.Any() ? seats.Max(s => s.Value) : 0;
         }
 
         public async Task<Seat?> UpdateAsync(Seat seat, CancellationToken cancellationToken)

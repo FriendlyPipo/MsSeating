@@ -1,7 +1,7 @@
 using FluentValidation;
 using MediatR;
 using Seats.Application.Commands;
-using Seats.Application.Dtos;
+using Seats.Core.Dtos;
 using Seats.Core.Repositories;
 using Seats.Domain.ValueObjects;
 using Seats.Core.RabbitMQ;
@@ -31,12 +31,11 @@ namespace Seats.Application.Handlers.Commands
 
             var seats = request.DeleteDto;
 
-            var specificSeat = await _repository.GetSpecificSeatsAsync(
+            var specificSeat = await _repository.GetSeatByZoneAsync(
+                ZoneId.Create(seats.ZoneId),
                 EventId.Create(seats.EventId),
                 FunctionId.Create(seats.FunctionId),
-                ZoneId.Create(seats.ZoneId),
-                VenueId.Create(seats.VenueId),
-                SeatRow.Create(seats.Row)
+                VenueId.Create(seats.VenueId)
             );
 
             var seatsToDelete = specificSeat

@@ -18,9 +18,6 @@ namespace Seats.Application.Validators
             RuleFor(x => x.DeleteDto.Quantity)
                 .GreaterThan(0).WithMessage("La cantidad debe ser mayor a 0.");
 
-            RuleFor(x => x.DeleteDto.Row)
-                .GreaterThanOrEqualTo(0).WithMessage("La fila es obligatoria y debe ser mayor o igual a 0.");
-
             RuleFor(x => x.DeleteDto.EventId)
                 .NotEmpty().WithMessage("El ID del evento es obligatorio.");
 
@@ -42,7 +39,7 @@ namespace Seats.Application.Validators
         {
             var seat = command.DeleteDto;
 
-            if (seat.Quantity <= 0 || seat.Row < 0 ||
+            if (seat.Quantity <= 0 ||
                 seat.EventId == Guid.Empty || seat.FunctionId == Guid.Empty ||
                 seat.ZoneId == Guid.Empty || seat.VenueId == Guid.Empty)
             {
@@ -51,12 +48,11 @@ namespace Seats.Application.Validators
 
             try
             {
-                var seats = await _repository.GetSpecificSeatsAsync(
+                var seats = await _repository.GetSeatByZoneAsync(
+                    ZoneId.Create(seat.ZoneId),
                     EventId.Create(seat.EventId),
                     FunctionId.Create(seat.FunctionId),
-                    ZoneId.Create(seat.ZoneId),
-                    VenueId.Create(seat.VenueId),
-                    SeatRow.Create(seat.Row)
+                    VenueId.Create(seat.VenueId)
                 );
 
                 return seats.Count >= seat.Quantity;

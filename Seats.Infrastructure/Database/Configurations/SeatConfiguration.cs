@@ -37,10 +37,6 @@ namespace Seats.Infrastructure.Database.Configurations
                 .HasConversion(id => id.HasValue ? id.Value.Value : (Guid?)null, value => value.HasValue ? UserId.Create(value.Value) : null)
                 .IsRequired(false);
 
-            builder.Property(s => s.Row)
-                .HasConversion(row => row.Value, value => SeatRow.Create(value))
-                .IsRequired();
-
             builder.Property(s => s.Number)
                 .HasConversion(num => num.Value, value => SeatNumber.Create(value))
                 .IsRequired();

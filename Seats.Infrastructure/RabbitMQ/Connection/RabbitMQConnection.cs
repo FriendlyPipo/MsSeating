@@ -1,6 +1,6 @@
 using Seats.Core.RabbitMQ;
 using RabbitMQ.Client;
-using Seats.Infrastructure.Exceptions;
+using Seats.Core.Exceptions;
 
 namespace Seats.Infrastructure.RabbitMQ.Connection
 {
