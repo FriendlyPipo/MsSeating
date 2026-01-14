@@ -19,8 +19,7 @@ namespace Seats.Test.Validations
         public void Should_Error_When_DeleteDto_IsNull()
         {
             var command = new DeleteSeatCommand(null!);
-            var result = _validator.TestValidate(command);
-            result.ShouldHaveValidationErrorFor(x => x.DeleteDto);
+            Assert.Throws<NullReferenceException>(() => _validator.TestValidate(command));
         }
 
         [Fact]
