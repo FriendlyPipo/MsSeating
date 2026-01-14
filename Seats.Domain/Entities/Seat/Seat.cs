@@ -27,12 +27,39 @@ namespace Seats.Domain.Entities
             Status = SeatStatus.Disponible;
         }
 
-        public void ChangeStatus(SeatStatus newStatus)
+        public void ChangeStatus(SeatStatus newStatus, UserId? newUserId = null)
         {
-            if (Status == SeatStatus.Disponible && newStatus == SeatStatus.Vendido)
+            if (newStatus == SeatStatus.Reservado)
             {
-                throw new InvalidOperationException("El estado de un asiento no puede pasar de disponible a vendido");
+                if (Status == SeatStatus.Vendido)
+                {
+                    throw new InvalidOperationException("El asiento ya está vendido y no puede ser reservado.");
+                }
+
+                if (Status == SeatStatus.Reservado && UserId.HasValue && newUserId.HasValue && UserId.Value.Value != newUserId.Value.Value)
+                {
+                    throw new InvalidOperationException("El asiento ya está reservado por otro usuario.");
+                }
+
+                UserId = newUserId;
             }
+            else if (newStatus == SeatStatus.Disponible)
+            {
+                UserId = null;
+            }
+            else if (newStatus == SeatStatus.Vendido)
+            {
+                if (Status == SeatStatus.Disponible)
+                {
+                    throw new InvalidOperationException("El estado de un asiento no puede pasar de disponible a vendido sin una reserva previa.");
+                }
+                
+                if (newUserId.HasValue)
+                {
+                    UserId = newUserId;
+                }
+            }
+
             Status = newStatus;
         }
 

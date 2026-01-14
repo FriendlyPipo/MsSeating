@@ -89,29 +89,28 @@ namespace Seats.Infrastructure.RabbitMQ.Consumer
             {
                 if (Enum.TryParse<SeatStatus>(updateSeatEvent.Status, true, out var status))
                 {
-                    seat.ChangeStatus(status);
-
-                    if (status == SeatStatus.Reservado && updateSeatEvent.UserId.HasValue)
+                    try 
                     {
-                        seat.AssignUser(UserId.Create(updateSeatEvent.UserId.Value));
+                        var userId = updateSeatEvent.UserId.HasValue ? UserId.Create(updateSeatEvent.UserId.Value) : (UserId?)null;
+                        seat.ChangeStatus(status, userId);
+
+                        context.Seat.Update(seat);
+                        await context.SaveChangesAsync();
+                        _logger.LogInformation($"Estado de asiento actualizado a {status} para el asiento {seatId.Value}");
+
+                        if (status != SeatStatus.Disponible)
+                        {
+                            await _userLogService.LogAsync(new UserLogDto
+                            {
+                                UserId = updateSeatEvent.UserId,
+                                Title = $"Asiento {status}",
+                                Description = $"Asiento {seatId.Value} {status} por el usuario {updateSeatEvent.UserId}"
+                            });
+                        }
                     }
-                    else if (status == SeatStatus.Disponible)
+                    catch (InvalidOperationException ex)
                     {
-                        seat.RemoveUser();
-                    }
-
-                    context.Seat.Update(seat);
-                    await context.SaveChangesAsync();
-                    _logger.LogInformation($"Estado de asiento actualizado a{status}");
-
-                    if (status != SeatStatus.Disponible)
-                    {
-                        await _userLogService.LogAsync(new UserLogDto
-                         {
-                            UserId = updateSeatEvent.UserId,
-                            Title = $"Asiento {status}",
-                            Description = $"Asiento {seatId.Value} {status} por el usuario {updateSeatEvent.UserId}"
-                        });
+                        _logger.LogWarning($"No se pudo cambiar el estado del asiento: {ex.Message}");
                     }
                 }
             }

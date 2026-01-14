@@ -36,7 +36,6 @@ namespace Seats.Test.Infrastructure.RabbitMQ
             await _consumer.ConsumeMessagesAsync("testQueue");
 
             // Assert
-            // QueueDeclareAsync is extension method, skipping verify
             
             _channelMock.Verify(c => c.BasicConsumeAsync(
                 "testQueue", 

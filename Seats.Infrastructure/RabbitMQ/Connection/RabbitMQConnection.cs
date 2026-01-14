@@ -38,7 +38,7 @@ namespace Seats.Infrastructure.RabbitMQ.Connection
                 throw new RabbitMQException("No se pudo crear el canal de comunicación con RabbitMQ.");
             }
 
-            await _channel.QueueDeclareAsync("seatsQueue", true, false, false);
+            await _channel.QueueDeclareAsync("seats_queue", true, false, false);
         }
 
         public IChannel GetChannel()

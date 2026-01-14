@@ -38,8 +38,6 @@ namespace Seats.Test.Infrastructure.RabbitMQ
             // Assert
             _connectionFactoryMock.Verify(f => f.CreateConnectionAsync(It.IsAny<CancellationToken>()), Times.Once);
             _connectionMock.Verify(c => c.CreateChannelAsync(It.IsAny<CreateChannelOptions>(), It.IsAny<CancellationToken>()), Times.Once);
-            // QueueDeclareAsync is an extension method and cannot be verified easily with Moq.
-            // _channelMock.Verify(c => c.QueueDeclareAsync("seatsQueue", true, false, false, It.IsAny<IDictionary<string, object?>>(), false, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]

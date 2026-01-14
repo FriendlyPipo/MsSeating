@@ -70,7 +70,7 @@ namespace Seats.Api
             {
                 var rabbitMqSection = configuration.GetSection("RabbitMQ");
                 var hostName = rabbitMqSection["HostName"];
-                var port = int.TryParse(rabbitMqSection["Port"], out var p) ? p : 15672;
+                var port = int.TryParse(rabbitMqSection["Port"], out var p) ? p : 5672;
                 var userName = rabbitMqSection["UserName"];
                 var password = rabbitMqSection["Password"];
 
